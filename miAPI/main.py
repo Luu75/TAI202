@@ -7,12 +7,12 @@ app = FastAPI()
 #Endpoints
 @app.get("/")
 async def read_root():
-    return {"message": "¡Hola, mundo! Esta es mi API con FastAPI."}
+    return {"mensaje": "¡Hola, mundo! Esta es mi API con FastAPI."}
 
 @app.get("/bienvenido")
 async def bienvenido():
     return {
-        "message": "Bienvenido a mi FastAPI",
+        "mensaje": "Bienvenido a mi FastAPI",
         "estatus": "activo"
     }
 
