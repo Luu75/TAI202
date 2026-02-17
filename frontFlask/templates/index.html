@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CRUD Usuarios</title>
+</head>
+<body>
+    <h1>Lista de Usuarios</h1>
+    <a href="/create">Crear Usuario</a>
+    <hr>
+
+    {% if usuarios %}
+        <ul>
+            {% for usuario in usuarios %}
+                <li>
+                    ID: {{ usuario.id }} |
+                    {{ usuario.nombre }} - {{ usuario.edad }} años
+                    <a href="/edit/{{ usuario.id }}">Editar</a>
+                    <a href="/delete/{{ usuario.id }}">Eliminar</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay usuarios disponibles.</p>
+    {% endif %}
+</body>
+</html>
