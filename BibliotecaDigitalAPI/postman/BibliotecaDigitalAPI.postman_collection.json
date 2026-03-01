@@ -1,0 +1,117 @@
+{
+  "info": {
+    "name": "Biblioteca Digital API",
+    "description": "Colección para probar todos los endpoints de la API de Biblioteca Digital.\n\nBase URL: http://localhost:5050",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Libros",
+      "item": [
+        {
+          "name": "Registrar libro (201 Created)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"El señor de los anillos\",\n  \"autor\": \"J.R.R. Tolkien\",\n  \"anio\": 1954,\n  \"paginas\": 1200,\n  \"estado\": \"disponible\"\n}"
+            },
+            "url": "{{base_url}}/v1/libros"
+          }
+        },
+        {
+          "name": "Registrar libro - 400 (nombre inválido)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"A\",\n  \"autor\": \"Autor\",\n  \"anio\": 2000,\n  \"paginas\": 100\n}"
+            },
+            "url": "{{base_url}}/v1/libros"
+          }
+        },
+        {
+          "name": "Listar todos los libros",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/v1/libros"
+          }
+        },
+        {
+          "name": "Buscar libro por nombre",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/v1/libros/buscar?nombre=anillos",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "libros", "buscar"],
+              "query": [{"key": "nombre", "value": "anillos"}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Préstamos",
+      "item": [
+        {
+          "name": "Registrar préstamo (201 Created)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"libro_id\": 1,\n  \"usuario\": {\n    \"nombre\": \"Juan Pérez\",\n    \"correo\": \"juan.perez@example.com\"\n  }\n}"
+            },
+            "url": "{{base_url}}/v1/prestamos"
+          }
+        },
+        {
+          "name": "Registrar préstamo - 409 (libro ya prestado)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"libro_id\": 1,\n  \"usuario\": {\n    \"nombre\": \"María García\",\n    \"correo\": \"maria@example.com\"\n  }\n}"
+            },
+            "url": "{{base_url}}/v1/prestamos"
+          }
+        },
+        {
+          "name": "Marcar libro como devuelto (200 OK)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/v1/prestamos/1/devolver"
+          }
+        },
+        {
+          "name": "Marcar devuelto - 409 (préstamo no existe)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/v1/prestamos/99999/devolver"
+          }
+        },
+        {
+          "name": "Eliminar registro de préstamo (200 OK)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/v1/prestamos/1"
+          }
+        },
+        {
+          "name": "Eliminar préstamo - 409 (ya no existe)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/v1/prestamos/99999"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {"key": "base_url", "value": "http://localhost:5050"}
+  ]
+}

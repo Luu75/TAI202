@@ -1,0 +1,8 @@
+services:
+  biblioteca_api:
+    build: .
+    container_name: BibliotecaDigitalAPI
+    ports:
+      - "5050:5050"
+    volumes:
+      - ./app:/app/app
