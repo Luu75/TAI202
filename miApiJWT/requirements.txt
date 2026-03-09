@@ -1,0 +1,8 @@
+uvicorn[standard]
+fastapi
+python-jose[cryptography]
+python-multipart
+
+pytest
+httpx
+pytest-asyncio
