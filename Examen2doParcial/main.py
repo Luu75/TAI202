@@ -1,16 +1,41 @@
 from fastapi import FastAPI
 import uvicorn  
 import asyncio
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, validator
 from datetime import datetime
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+import secrets
 app = FastAPI()
 
 
-class crearReserva(BaseModel):
-    nombre_cliente: str = Field(..., min_length=2, max_length=6, description="Nombre del Cliente")
+security= HTTPBasic()
 
-class Listarserva(BaseModel):
-    FechaReserva: str = Field(..., description="Fecha de la reserva futura entre 8:00 AM y 10:00 PM")
+def verificar_peticion(credentiales:HTTPBasicCredentials=Depends(security)):
+    usuario_correcto= secrets.compare_digest(credentiales.username, "admin")
+    contrasena_correcta= secrets.compare_digest(credentiales.password, "rest123")
+
+    if not (usuario_correcto and contrasena_correcta):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Credenciales no validas",
+        )
+    return credentiales.username
+
+
+class crearReserva(BaseModel):
+    id_reserva: int = Field(..., description="ID de la reserva")
+    nombre_cliente: str = Field(..., min_length=2, max_length=6, description="Nombre del Cliente")
+      #Fecha reserva futura entre 8:00 AM y 10:00 PM
+    FechaReserva: datetime = Field(..., description="Fecha y hora de la reserva")
+    CupodePersonas: str = Field(..., min_length=1, max_length=10, description="Cupo de personas para la reserva")
+
+#no permitir reservas en domingos
+    @validator('FechaReserva')
+    def validar_fecha_reserva(cls, value):
+        if value.weekday() == 6:  
+            raise ValueError("No se permiten reservas los domingos")
+        return value
 
     
 class ConsultarporID(BaseModel):
@@ -23,34 +48,29 @@ class cancelarReserva(BaseModel):
     id_reserva: int = Field(..., description="ID de la reserva a cancelar")
     
 
-@app.post("/crear_reserva")
+#Aplicar HTTPBasic a Listar reservas y Cancelar Reservas
+@app.get("/v1/listar_reservas", tags=["Reservas"])
+async def listar_reservas(username: str = Depends(verificar_peticion)):
+    return {"message": "Listado de reservas"}
+
+@app.delete("/v1/cancelar_reserva", tags=["Reservas"])
+async def cancelar_reserva(reserva: cancelarReserva, username: str = Depends(verificar_peticion)):
+    return {"message": f"Reserva cancelada con ID {reserva.id_reserva}"}
+
+@app.post("/v1/crear_reserva", tags=["Reservas"])
 async def crear_reserva(reserva: crearReserva):
-    return {"message": f"Reserva creada para {reserva.nombre_cliente}"}
+    return {"message": f"Reserva creada con ID {reserva.id_reserva}"}
 
-@app.post("/listar_reserva")
-async def listar_reserva(reserva: Listarserva):
-    return {"message": f"Reservas listadas para la fecha {reserva.FechaReserva}"}
-
-@app.post("/consultar_reserva")
+@app.get("/v1/consultar_reserva", tags=["Reservas"] )
 async def consultar_reserva(reserva: ConsultarporID):
-    return {"message": f"Reserva consultada con ID {reserva.id_reserva}"}
+    return {"message": f"Consulta de reserva con ID {reserva.id_reserva}"}
 
-@app.post("/confirmar_reserva")
+@app.post("/v1/confirmar_reserva", tags=["Reservas"])
 async def confirmar_reserva(reserva: confirmarReserva):
     return {"message": f"Reserva confirmada con ID {reserva.id_reserva}"}
 
-@app.post("/cancelar_reserva")
-async def cancelar_reserva(reserva: cancelarReserva):
-    return {"message": f"Reserva cancelada con ID {reserva.id_reserva}"}
-
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=5020)
-
-
-
-
-
-
+    uvicorn.run(app, host="5020", port=5020)
 
 
 

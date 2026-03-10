@@ -1,0 +1,8 @@
+services:
+  biblioteca_api:
+    build: .
+    container_name: Examen2doParcial
+    ports:
+      - "5020:5020"
+    volumes:
+      - ./app:/app/app
