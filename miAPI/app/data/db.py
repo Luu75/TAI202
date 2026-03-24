@@ -5,7 +5,7 @@ import os
 #1. definimos la url de conexion 
 DATABASE_URL = os.getenv(
     "DATABASE_URL", 
-    "postgresql://postgres:123456@localhost:5432/DB_miapi"
+    "postgresql://admin:123456@postgres:5432/DB_miapi"
 )
 
 #2. Creamos el motor de conexion

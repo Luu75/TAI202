@@ -1,7 +1,5 @@
 import asyncio
 from typing import Optional
-
-from flask import app
 from app.data.database import usuarios
 from fastapi import APIRouter
 
@@ -15,5 +13,6 @@ async def holamundo():
 async def bienvenido():
     await asyncio.sleep(5)
     return {"mensaje": "Bienvenido a FastAPI"}
+
 
 
